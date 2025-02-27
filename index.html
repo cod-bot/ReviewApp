@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Review Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Fake Review Detector</h1>
+        <form id="reviewForm">  <label for="review">Enter your review:</label><br>
+            <textarea id="review" name="review" placeholder="Enter your review here..."></textarea><br>
+            <button type="submit">Analyze</button>
+        </form>
+        <div id="loading" style="display:none;">
+            <img src="{{ url_for('static', filename='loading1.gif') }}" alt="Loading...">
+        </div>
+        <div id="result" style="display:none;">  <p id="prediction"></p>
+            <ul id="reasons"></ul>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  <script>
+        $(document).ready(function() { // Ensure the DOM is fully loaded
+            $('#reviewForm').submit(function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                $('#loading').show(); // Show loading indicator
+                $('#result').hide();  // Hide previous results
+
+                var reviewText = $('#review').val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/analyze',
+                    data: { review: reviewText },
+                    success: function(response) {
+                        $('#loading').hide(); // Hide loading indicator
+                        $('#result').show();  // Show the results div
+
+                        var prediction = response.result.prediction;
+                        var reasons = response.result.reasons;
+
+                        $('#prediction').text('Prediction: ' + prediction);
+                        $('#reasons').empty();
+                        for (var i = 0; i < reasons.length; i++) {
+                            $('#reasons').append('<li>' + reasons[i] + '</li>');
+                        }
+                    },
+                    error: function(error) {
+                        $('#loading').hide(); // Hide loading indicator
+                        console.error('Error:', error);
+                        alert('An error occurred during analysis.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

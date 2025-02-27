@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Review Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Fake Review Result</h1>
+        <div id="result"></div>  </div>
+    <script>
+        // Get the result data from localStorage
+        const resultData = JSON.parse(localStorage.getItem('reviewResult'));
+
+        if (resultData) {
+            const resultDiv = document.getElementById('result');
+            let outputHTML = `The review is: <strong>${resultData.prediction}</strong><p>Reasons:</p><ul>`;
+            resultData.reasons.forEach(reason => {
+                outputHTML += `<li>${reason}</li>`;
+            });
+            outputHTML += "</ul>";
+            resultDiv.innerHTML = outputHTML;
+        } else {
+            // Handle the case where resultData is null (e.g., redirect back to index.html)
+            window.location.href = "/"; // Redirect to the main page
+        }
+
+    </script>
+</body>
+</html>
